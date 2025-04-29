@@ -54,7 +54,7 @@ class System:
             self.show_login_prompt()
 
     def login(self):
-        school_id = input("Enter School ID: ")
+        school_id = input("Enter Student ID: ")
         password = input("Enter Password: ")
         if school_id in self.users and self.users[school_id].password == password:
             self.logged_in_user = self.users[school_id]
@@ -65,7 +65,7 @@ class System:
             self.login()
 
     def create_new_user(self):
-        school_id = input("Enter new School ID: ")
+        school_id = input("Enter new Student ID: ")
         if school_id in self.users:
             print(f"User with ID {school_id} already exists.")
             return self.show_login_prompt()
@@ -109,7 +109,7 @@ class System:
 
     def add_user(self):
         # Add user by School ID to the recipient list (like adding a friend)
-        new_school_id = input("Enter the School ID of the user to add: ")
+        new_school_id = input("Enter the Student ID of the user to add: ")
 
         # Check if the user exists in the system
         if new_school_id not in self.users:
@@ -202,7 +202,7 @@ class System:
         while True:
             add_user = input(f"Do you want to add a user to the group {group_name}? Y/N: ")
             if add_user.upper() == 'Y':
-                user_id = input("Enter the School ID of the user to add: ")
+                user_id = input("Enter the Student ID of the user to add: ")
                 if user_id not in self.recipients:
                     print(f"User {user_id} not found in the recipient list.")
                 else:
