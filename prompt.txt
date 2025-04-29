@@ -54,18 +54,18 @@ class System:
             self.show_login_prompt()
 
     def login(self):
-        school_id = input("Enter Student ID: ")
+        school_id = input("Enter School ID: ")
         password = input("Enter Password: ")
         if school_id in self.users and self.users[school_id].password == password:
             self.logged_in_user = self.users[school_id]
             print(f"Login successful. Welcome {school_id}!")
             self.show_navigation_menu()
         else:
-            print("Invalid credentials. Please try again.")
-            self.login()
+            print("Invalid credentials. Redirecting to new user creation...")
+            self.create_new_user()
 
     def create_new_user(self):
-        school_id = input("Enter new Student ID: ")
+        school_id = input("Enter new School ID: ")
         if school_id in self.users:
             print(f"User with ID {school_id} already exists.")
             return self.show_login_prompt()
@@ -94,11 +94,11 @@ class System:
             choice = input("Choose an option: ")
 
             if choice == '1':
-                self.add_user()  # Add user to recipient list
+                self.add_user()
             elif choice == '2':
                 self.show_recipient_list()
             elif choice == '3':
-                self.create_group()  # This is the function that was missing
+                self.create_group()
             elif choice == '4':
                 self.send_message()
             elif choice == '5':
@@ -108,21 +108,15 @@ class System:
                 print("Invalid choice, please try again.")
 
     def add_user(self):
-        # Add user by School ID to the recipient list (like adding a friend)
-        new_school_id = input("Enter the Student ID of the user to add: ")
+        new_school_id = input("Enter the School ID of the user to add: ")
 
-        # Check if the user exists in the system
         if new_school_id not in self.users:
             print(f"User with ID {new_school_id} does not exist.")
-            
-            if new_school_id not in self.recipients:
-                self.recipients.append(new_school_id)
-                print(f"User {new_school_id} has been added to your recipient list.")
-            else:
-                print(f"User {new_school_id} is already in your recipient list.")
-             
-        
-        # Display the updated recipient list
+            self.recipients.append(new_school_id)
+            print(f"User {new_school_id} has been added to your recipient list.")
+        else:
+            print(f"User {new_school_id} is already in your recipient list.")
+
         print("Updated recipient list:", self.recipients)
 
     def show_recipient_list(self):
@@ -139,7 +133,7 @@ class System:
         if send_message.upper() == 'Y':
             message = input("Enter your message: ")
             self.create_message(recipient, message)
-            self.ask_send_another_message()  # Ask if the user wants to send another message
+            self.ask_send_another_message()
         else:
             return
 
@@ -152,7 +146,7 @@ class System:
             else:
                 message = input("Enter your message: ")
                 self.create_message(recipient, message)
-                self.ask_send_another_message()  # Repeat if the user wants to send another message
+                self.ask_send_another_message()
         else:
             print("Returning to recipient list.")
 
@@ -176,7 +170,6 @@ class System:
         if group_name not in self.groups:
             print(f"Group {group_name} does not exist.")
         else:
-            # Send message to all members of the group
             message_content = input(f"Enter your message to the group {group_name}: ")
             for member in self.groups[group_name]:
                 self.create_message(member, message_content)
@@ -185,34 +178,40 @@ class System:
     def create_group(self):
         group_name = input("Enter the name of the new group: ")
 
-        # Check if group already exists
         if group_name in self.groups:
             print(f"Group {group_name} already exists.")
+            return
+        
+        members = self.add_to_group(group_name)
+        MIN_GROUP_MEMBERS = 2
+
+        if len(members) < MIN_GROUP_MEMBERS:
+            print(f"A group must have at least {MIN_GROUP_MEMBERS} members. Group {group_name} was not created.")
         else:
-            self.groups[group_name] = []
-
-            # Add group name to the recipient list
+            self.groups[group_name] = members
             self.recipients.append(group_name)
-            print(f"Group {group_name} has been created successfully and added to the recipient list.")
-
-        # Now, allow the user to add people to the group
-        self.add_to_group(group_name)
+            print(f"Group '{group_name}' has been created with members: {members}")
 
     def add_to_group(self, group_name):
+        members = []
         while True:
+            print("\nCurrent Recipient List:", self.recipients)
             add_user = input(f"Do you want to add a user to the group {group_name}? Y/N: ")
             if add_user.upper() == 'Y':
-                user_id = input("Enter the Student ID of the user to add: ")
+                user_id = input("Enter the School ID of the user to add: ")
                 if user_id not in self.recipients:
                     print(f"User {user_id} not found in the recipient list.")
                 else:
-                    self.groups[group_name].append(user_id)
-                    print(f"User {user_id} added to the group {group_name}.")
+                    if user_id not in members:
+                        members.append(user_id)
+                        print(f"User {user_id} added to the group.")
+                    else:
+                        print(f"User {user_id} is already in the group.")
             elif add_user.upper() == 'N':
                 break
             else:
                 print("Invalid input. Please enter Y or N.")
-        print("Updated group:", self.groups[group_name])
+        return members
 
     def logout(self):
         logout_choice = input("Do you want to logout? Y/N: ")
