@@ -33,9 +33,14 @@ class MessageQueue:
 
 class System:
     def __init__(self):
-        self.users = {}  # Store users by school_id
+        self.users = {
+            "alice": User("alice", "pass123"),
+            "bob": User("bob", "secure456"),
+            "charlie": User("charlie", "mypassword")
+        }  # Preloaded users
+
         self.logged_in_user = None
-        self.recipients = []  # List of recipients (friends)
+        self.recipients = []  # Will be set upon login
         self.groups = {}
         self.message_queues = {}
 
@@ -58,6 +63,8 @@ class System:
         password = input("Enter Password: ")
         if school_id in self.users and self.users[school_id].password == password:
             self.logged_in_user = self.users[school_id]
+            # Set recipient list to all other users
+            self.recipients = [uid for uid in self.users if uid != school_id]
             print(f"Login successful. Welcome {school_id}!")
             self.show_navigation_menu()
         else:
@@ -79,8 +86,10 @@ class System:
 
         new_user = User(school_id, password)
         self.users[school_id] = new_user
-        print(f"User with ID {school_id} has been created successfully.")
         self.logged_in_user = new_user
+        # Set recipient list to all other users
+        self.recipients = [uid for uid in self.users if uid != school_id]
+        print(f"User with ID {school_id} has been created successfully.")
         self.show_navigation_menu()
 
     def show_navigation_menu(self):
