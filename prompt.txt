@@ -161,9 +161,11 @@ class System:
                 message = input("Enter your message: ")
                 self.create_message(recipient, message)
                 self.ask_send_another_message()
+        elif send_another.upper() == 'N':
+            print("Returning to recipient list...")
+            self.show_recipient_list()
         else:
-            print("Returning to recipient list.")
-            self.show_recipient_list
+            print("Invalid input, returning to navigation menu...")
 
     def create_message(self, recipient, content):
         message = Message(self.logged_in_user.school_id, recipient, content)
