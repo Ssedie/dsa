@@ -34,9 +34,9 @@ class MessageQueue:
 class System:
     def __init__(self):
         self.users = {
-            "alice": User("alice", "pass123"),
-            "bob": User("bob", "secure456"),
-            "charlie": User("charlie", "mypassword")
+            "274": User("alice", "pass123"),
+            "2335": User("bob", "secure456"),
+            "2665": User("charlie", "mypassword")
         }  # Preloaded users
 
         self.logged_in_user = None
@@ -47,12 +47,12 @@ class System:
     def show_login_prompt(self):
         print("~"*75)
         print("="*75)
-        print("🎉Welcome to KONEQT🎉")
+        print("                       🎉Welcome to KONEQT🎉")
         print("Your communication system designed to help get hings done, together")
         print("="*75)
         print("~"*75)
-        print("1. Login")
-        print("2. Create New User")
+        print("1. Login✅")
+        print("2. Create New User🆕")
         choice = input("Choose an option: ")
 
         if choice == '1':
@@ -99,12 +99,12 @@ class System:
 
     def show_navigation_menu(self):
         while True:
-            print("\n--- Navigation Menu ---")
-            print("1. Add User (Friend)")
-            print("2. Show Recipient List")
-            print("3. Create Group")
-            print("4. Message")
-            print("5. Logout")
+            print("\n--------- Navigation Menu ---------")
+            print("1. Add User (Friend)🫂")
+            print("2. Show Recipient List📋")
+            print("3. Create Group👥👥")
+            print("4. Message🗨️")
+            print("5. Logout❌")
             choice = input("Choose an option: ")
 
             if choice == '1':
@@ -196,7 +196,7 @@ class System:
         if group_name in self.groups:
             print(f"Group {group_name} already exists.")
             return
-        
+
         members = self.add_to_group(group_name)
         MIN_GROUP_MEMBERS = 2
 
@@ -232,6 +232,7 @@ class System:
         logout_choice = input("Do you want to logout? Y/N: ")
         if logout_choice.upper() == 'Y':
             print("Logging out...")
+            print("Thank you for using our system😊")
             self.logged_in_user = None
             self.show_login_prompt()
         else:
