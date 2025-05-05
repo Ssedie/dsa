@@ -34,9 +34,11 @@ class MessageQueue:
 class System:
     def __init__(self):
         self.users = {
-            "274": User("alice", "pass123"),
-            "2335": User("bob", "secure456"),
-            "2665": User("charlie", "mypassword")
+            "001": User("alice", "pass123"),
+            "002": User("bob", "secure456"),
+            "003": User("charlie", "mypassword"),
+            "004": User("darwin", "12345"),
+            "005": User("eugene", "miamor")
         }  # Preloaded users
 
         self.logged_in_user = None
@@ -64,8 +66,9 @@ class System:
             self.show_login_prompt()
 
     def login(self):
-        school_id = input("Enter School ID: ")
+        school_id = input("Enter Student ID: ")
         password = input("Enter Password: ")
+
         if school_id in self.users and self.users[school_id].password == password:
             self.logged_in_user = self.users[school_id]
             # Set recipient list to all other users
@@ -73,11 +76,16 @@ class System:
             print(f"Login successful. Welcome {school_id}!")
             self.show_navigation_menu()
         else:
-            print("Invalid credentials. Redirecting to new user creation...")
-            self.create_new_user()
+            print("Invalid credentials.")
+            choice = input("Do you want to create a new user? (Y/N): ")
+            if choice.upper() == 'Y':
+                self.create_new_user()
+            else:
+                print("Returning to login prompt.")
+                self.show_login_prompt()
 
     def create_new_user(self):
-        school_id = input("Enter new School ID: ")
+        school_id = input("Enter new Student ID: ")
         if school_id in self.users:
             print(f"User with ID {school_id} already exists.")
             return self.show_login_prompt()
@@ -122,16 +130,47 @@ class System:
                 print("Invalid choice, please try again.")
 
     def add_user(self):
-        new_school_id = input("Enter the School ID of the user to add: ")
+        username = input("Enter the username of the user to add: ")
+        new_school_id = self.find_user_id_by_name(username)
 
-        if new_school_id not in self.users:
-            print(f"User with ID {new_school_id} does not exist in your recipient list.")
-            self.recipients.append(new_school_id)
-            print(f"User {new_school_id} has been added to your recipient list.")
+        if new_school_id is None:
+            print(f"User with username '{username}' does not exist.")
+            create = input("Do you want to create a new user with this username? Y/N: ")
+            if create.upper() == 'Y':
+                password = input("Enter password for new user: ")
+                school_id = self.generate_new_user_id()
+                self.users[school_id] = User(username, password)
+                new_school_id = school_id
+                print(f"User '{username}' created with ID: {new_school_id}")
+            else:
+                return
+
+        print(f"Found user: {username} (ID: {new_school_id})")
+
+        if new_school_id in self.recipients:
+            print(f"User '{username}' (ID: {new_school_id}) is already in your recipient list.")
         else:
-            print(f"User {new_school_id} is already in your recipient list.")
+            self.recipients.append(new_school_id)
+            print(f"User '{username}' (ID: {new_school_id}) has been added to your recipient list.")
 
-        print("Updated recipient list:", self.recipients)
+        print("\nUpdated recipient list:")
+        for uid in self.recipients:
+            user = self.users.get(uid)
+            if user:
+                print(f" - {user.school_id} (ID: {uid})")
+            else:
+                print(f" - Unknown User (ID: {uid})")
+
+    def find_user_id_by_name(self, name):
+        for uid, user in self.users.items():
+            if user.school_id.lower() == name.lower():
+                return uid
+        return None
+
+    def generate_new_user_id(self):
+        existing_ids = [int(uid) for uid in self.users.keys() if uid.isdigit()]
+        next_id = max(existing_ids) + 1 if existing_ids else 1
+        return str(next_id).zfill(3)
 
     def show_recipient_list(self):
         print("\n--- Recipient List ---")
@@ -143,7 +182,12 @@ class System:
             self.ask_send_message(recipient)
 
     def ask_send_message(self, recipient):
-        send_message = input(f"Do you want to send a message to {recipient}? Y/N: ")
+        if recipient in self.users:
+            recipient_name = self.users[recipient].school_id
+            send_message = input(f"Do you want to send a message to {recipient_name}? Y/N: ")
+        else:
+            send_message = input(f"Do you want to send a message to group '{recipient}'? Y/N: ")
+
         if send_message.upper() == 'Y':
             message = input("Enter your message: ")
             self.create_message(recipient, message)
@@ -161,11 +205,9 @@ class System:
                 message = input("Enter your message: ")
                 self.create_message(recipient, message)
                 self.ask_send_another_message()
-        elif send_another.upper() == 'N':
-            print("Returning to recipient list...")
-            self.show_recipient_list()
         else:
-            print("Invalid input, returning to navigation menu...")
+            print("Returning to recipient list.")
+            self.show_recipient_list
 
     def create_message(self, recipient, content):
         message = Message(self.logged_in_user.school_id, recipient, content)
