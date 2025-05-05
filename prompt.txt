@@ -45,7 +45,12 @@ class System:
         self.message_queues = {}
 
     def show_login_prompt(self):
-        print("Welcome to the messaging system.")
+        print("~"*75)
+        print("="*75)
+        print("🎉Welcome to KONEQT🎉")
+        print("Your communication system designed to help get hings done, together")
+        print("="*75)
+        print("~"*75)
         print("1. Login")
         print("2. Create New User")
         choice = input("Choose an option: ")
@@ -158,6 +163,7 @@ class System:
                 self.ask_send_another_message()
         else:
             print("Returning to recipient list.")
+            self.show_recipient_list
 
     def create_message(self, recipient, content):
         message = Message(self.logged_in_user.school_id, recipient, content)
