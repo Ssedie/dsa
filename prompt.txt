@@ -47,8 +47,8 @@ class System:
     def show_login_prompt(self):
         print("~"*75)
         print("="*75)
-        print("                       🎉Welcome to KONEQT🎉")
-        print("Your communication system designed to help get hings done, together")
+        print("                           🎉Welcome to KONEQT🎉")
+        print("    Your communication system designed to help get hings done, together")
         print("="*75)
         print("~"*75)
         print("1. Login✅")
@@ -125,7 +125,7 @@ class System:
         new_school_id = input("Enter the School ID of the user to add: ")
 
         if new_school_id not in self.users:
-            print(f"User with ID {new_school_id} does not exist.")
+            print(f"User with ID {new_school_id} does not exist in your recipient list.")
             self.recipients.append(new_school_id)
             print(f"User {new_school_id} has been added to your recipient list.")
         else:
